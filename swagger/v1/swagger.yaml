@@ -1,0 +1,438 @@
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  /auth/sign_in:
+    post:
+      summary: Sign in to the application with email and password
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: User's email address
+                  example: user@example.com
+                password:
+                  type: string
+                  format: password
+                  description: User's password
+                  example: secret_password
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    description: User information
+                  access-token:
+                    type: string
+                    description: Access token for authentication
+                  client:
+                    type: string
+                    description: Client token for authentication
+                  uid:
+                    type: string
+                    description: UID for authentication
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+
+  /api/v1/doctors/{doctor_id}/appointments:
+    post:
+      summary: Create a new appointment
+      tags:
+        - Appointments
+      parameters:
+        - name: access-token
+          in: header
+          required: true
+          description: Access token for authentication
+          schema:
+            type: string
+        - name: client
+          in: header
+          required: true
+          description: Client token for authentication
+          schema:
+            type: string
+        - name: uid
+          in: header
+          required: true
+          description: UID for authentication
+          schema:
+            type: string
+        - name: doctor_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                availability_id:
+                  type: integer
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  start_time:
+                    type: string
+                    format: date-time
+                  end_time:
+                    type: string
+                    format: date-time
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+
+  /api/v1/doctors/{doctor_id}/appointments/{id}:
+    delete:
+      summary: Delete an appointment
+      tags:
+        - Appointments
+      parameters:
+        - name: access-token
+          in: header
+          required: true
+          description: Access token for authentication
+          schema:
+            type: string
+        - name: client
+          in: header
+          required: true
+          description: Client token for authentication
+          schema:
+            type: string
+        - name: uid
+          in: header
+          required: true
+          description: UID for authentication
+          schema:
+            type: string
+        - name: doctor_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+
+  /api/v1/doctors/{doctor_id}/appointments/{id}:
+    patch:
+      summary: Update an appointment
+      tags:
+        - Appointments
+      parameters:
+        - name: access-token
+          in: header
+          required: true
+          description: Access token for authentication
+          schema:
+            type: string
+        - name: client
+          in: header
+          required: true
+          description: Client token for authentication
+          schema:
+            type: string
+        - name: uid
+          in: header
+          required: true
+          description: UID for authentication
+          schema:
+            type: string
+        - name: doctor_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                availability_id:
+                  type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  start_time:
+                    type: string
+                    format: date-time
+                  end_time:
+                    type: string
+                    format: date-time
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+
+  /api/v1/doctors/{doctor_id}/availabilities/open_slots:
+    get:
+      summary: Get open slots for a doctor
+      tags:
+        - Availabilities
+      parameters:
+        - name: access-token
+          in: header
+          required: false
+          description: Access token for authentication
+          schema:
+            type: string
+        - name: client
+          in: header
+          required: false
+          description: Client token for authentication
+          schema:
+            type: string
+        - name: uid
+          in: header
+          required: false
+          description: UID for authentication
+          schema:
+            type: string
+        - name: doctor_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    start_time:
+                      type: string
+                      format: date-time
+                    end_time:
+                      type: string
+                      format: date-time
+                    booked:
+                      type: boolean
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+
+  /api/v1/doctors/{doctor_id}/availabilities:
+    get:
+      summary: Get availabilites of a doctor
+      tags:
+        - Availabilities
+      parameters:
+        - name: access-token
+          in: header
+          required: true
+          description: Access token for authentication
+          schema:
+            type: string
+        - name: client
+          in: header
+          required: true
+          description: Client token for authentication
+          schema:
+            type: string
+        - name: uid
+          in: header
+          required: true
+          description: UID for authentication
+          schema:
+            type: string
+        - name: doctor_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    start_time:
+                      type: string
+                      format: date-time
+                    end_time:
+                      type: string
+                      format: date-time
+                    booked:
+                      type: boolean
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+
+  /api/v1/doctors/{doctor_id}/working_hours:
+    get:
+      summary: Get working hours for a doctor
+      tags:
+        - Working Hours
+      parameters:
+        - name: access-token
+          in: header
+          required: true
+          description: Access token for authentication
+          schema:
+            type: string
+        - name: client
+          in: header
+          required: true
+          description: Client token for authentication
+          schema:
+            type: string
+        - name: uid
+          in: header
+          required: true
+          description: UID for authentication
+          schema:
+        - name: doctor_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    day_of_week:
+                      type: string
+                    start_time:
+                      type: string
+                      format: time
+                    end_time:
+                      type: string
+                      format: time
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+
+servers:
+  - url: http://{defaultHost}
+    variables:
+      defaultHost:
+        default: localhost:3000
